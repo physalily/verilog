@@ -2,6 +2,10 @@
 made 2019/1/16 powered harumaki
 comment:
     nothing
+parameter:
+    DATA_SIZE
+    COLUMN_SIZE
+    ROW_SIZE
 function list:
 module
 +rowSum[22] 
