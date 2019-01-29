@@ -13,13 +13,16 @@ module
 *******************************/
 
 module matrix_mdl(clock, reset, enable, datsA, datsB, datsOut);
+    parameter DATA_SIZE = 'd16;
+    parameter COLUMN_SIZE = 'd64;
+    parameter ROW_SIZE = 'd64;
     input clock;
     input reset;
     input enable;
-    input[1023:0] datsA;
-    input[65535:0] datsB;
-    output[1024:0]datsOut;
-    reg[1024:0] datsOut;
+    input[(DATA_SIZE * COLUMN_SIZE) -1:0] datsA;
+    input[(DATA_SIZE * COLUMN_SIZE * ROW_SIZE) -1:0] datsB;
+    output[(DATA_SIZE * COLUMN_SIZE) -1:0]datsOut;
+    reg[(DATA_SIZE * COLUMN_SIZE) -1:0] datsOut;
     integer i = 0;
     
     always @ (posedge clock or negedge reset)
@@ -32,54 +35,54 @@ module matrix_mdl(clock, reset, enable, datsA, datsB, datsOut);
     begin
         if(enable)
         begin
-            for(i=0; i <64; i =i+1)//64 is matrix columm size
+            for(i=0; i <COLUMN_SIZE; i =i+1)//64 is matrix columm size
             begin
-                datsOut[i*16+:16] <= sumShift(rowSum(rowCal(datsA, datsB[i*1024+:1024])));
+                datsOut[i*DATA_SIZE -1+:DATA_SIZE -1] <= sumShift(rowSum(rowCal(datsA, datsB[i*(DATA_SIZE * ROW_SIZE)+:(DATA_SIZE * ROW_SIZE)])));
             end
         end
     end
     end
 
-    function[21:0] rowSum;//16bit x64 overflow size added
-    input[1023:0] dataset;
+    function[(DATA_SIZE + (DATA_SIZE / 2)):0] rowSum;//DATA_SIZE -1bit x64 overflow size added
+    input[(DATA_SIZE * COLUMN_SIZE) -1:0] dataset;
     integer i;
-    for(i = 0; i <64; i = i+1)
-        rowSum = rowSum + dataset[i*16+:16];      
+    for(i = 0; i <(DATA_SIZE * ROW_SIZE) -1; i = i+1)
+        rowSum = rowSum + dataset[i*DATA_SIZE +:DATA_SIZE ];      
     endfunction
     
-    function[15:0] sumShift;
-    input[21:0] A;
-    if(~(| A[21:16]))
+    function[DATA_SIZE -1:0] sumShift;
+    input[(DATA_SIZE + (DATA_SIZE / 2)):0] A;
+    if(~(| A[(DATA_SIZE + (DATA_SIZE / 2)):DATA_SIZE]))
         sumShift = A;
     else
-        sumShift = 16'hFFFF;
+        sumShift = -1;//bit set all 1 
     endfunction
 
-    function[1023:0] rowCal;
-    input [1023:0] datsA;
-    input [1023:0] datsB;
+    function[(DATA_SIZE* COLUMN_SIZE) -1:0] rowCal;
+    input [(DATA_SIZE* COLUMN_SIZE) -1:0] datsA;
+    input [(DATA_SIZE* ROW_SIZE) -1:0] datsB;
     integer i;
-    for(i=0; i < 64; i =i+1)//64 is matrix row size
+    for(i=0; i < (DATA_SIZE * ROW_SIZE) -1; i =i+1)//(DATA_SIZE * ROW_SIZE) -1 is matrix row size
     begin
-        datsOut[i*16+:16] = VectorCal(datsA[i*16+:16],datsB[i*16+:16]);
+        datsOut[i*DATA_SIZE+:DATA_SIZE] = VectorCal(datsA[i*DATA_SIZE+:DATA_SIZE],datsB[i*DATA_SIZE+:DATA_SIZE]);
     end
     endfunction
 
-    function[15:0] VectorCal;
-    input [15:0] datsA;
-    input [15:0] datsB;
-    VectorCal = DRShift_16(multiplication_16(datsA, datsB));
+    function[DATA_SIZE -1:0] VectorCal;
+    input [DATA_SIZE -1:0] datsA;
+    input [DATA_SIZE -1:0] datsB;
+    VectorCal = DRShift_DATA_SIZE(multiplication_DATA_SIZE(datsA, datsB));
     endfunction
   
-    function[31:0] multiplication_16;
-    input[15:0] A;
-    input[15:0] B;
-    multiplication_16 = A * B;
+    function[(DATA_SIZE *2) -1:0] multiplication_DATA_SIZE;
+    input[DATA_SIZE -1:0] A;
+    input[DATA_SIZE -1:0] B;
+    multiplication_DATA_SIZE= A * B;
     endfunction
     
-    function[15:0] DRShift_16;
-    input[31:0] A;
-    DRShift_16 = A[31:16];
+    function[DATA_SIZE -1:0] DRShift_DATA_SIZE;
+    input[(DATA_SIZE *2) -1:0] A;
+    DRShift_DATA_SIZE= A[(DATA_SIZE *2) -1:DATA_SIZE];
     endfunction
     
 endmodule
