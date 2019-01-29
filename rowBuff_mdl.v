@@ -8,15 +8,12 @@ parameter:
     COLUMN_SIZE
     ROW_SIZE
 function list
-
-
 *******************************/
 
 module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
     parameter DATA_SIZE ='d16;
     parameter COLUMN_SIZE ='d64;
-    parameter ROW_SIZE = 'd64;
-    //parameter 
+    parameter ROW_SIZE = 'd64; 
     input clock;
     input reset;
     input enable;
@@ -27,7 +24,7 @@ module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
     reg dsetFlag = 0;
     reg[(DATA_SIZE * COLUMN_SIZE * ROW_SIZE)-1:0] datsOut = 0;
     reg[(DATA_SIZE * COLUMN_SIZE * ROW_SIZE)-1:0] datsBuff = 0;
-    reg[3:0] count = 4'd0;
+    reg [log2(COLUMN_SIZE):0]count = 'b0;
     
     always@(posedge clock or negedge reset)
     begin
@@ -51,16 +48,16 @@ module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
             begin
                 datsBuff[(DATA_SIZE * ROW_SIZE)-1:0] = dats;
                 
-                if(count == 4'd8)
+                if(count == COLUMN_SIZE)
                 begin
-                    count       = 4'd8;
+                    count       = 'd8;
                     datsOut     = datsBuff;
                     datsOut     = 'h0;
                     dsetFlag    = 1'b1;
                 end
                 else
                 begin
-                    count       = count + 4'd1;
+                    count       = count + 'd1;
                     datsBuff    = datsBuff<<DATA_SIZE;
                     dsetFlag    = 1'b0;
                 end
@@ -68,5 +65,14 @@ module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
         end
     end
     end
-    
+    // Beyond Circuts, ref:Constant Function in Verilog 2001
+        // http://www.beyond-circuits.com/wordpress/2008/11/constant-functions/
+    function integer log2;
+    input integer addr;
+    begin
+        addr = addr - 1;
+        for (log2=0; addr>0; log2=log2+1)
+            addr = addr >> 1;
+    end
+    endfunction
 endmodule
