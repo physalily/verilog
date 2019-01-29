@@ -3,20 +3,30 @@ made 2019/1/17 powered harumaki
 module name: rowBuff_mdl
 this is matrix_mdl data buffer.
 
+parameter:
+    DATA_SIZE
+    COLUMN_SIZE
+    ROW_SIZE
 function list
+
+
 *******************************/
 
 module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
+    parameter DATA_SIZE ='d16;
+    parameter COLUMN_SIZE ='d64;
+    parameter ROW_SIZE = 'd64;
+    //parameter 
     input clock;
     input reset;
     input enable;
     input dendFlag;
-    input[1023:0] dats;
+    input[(DATA_SIZE * ROW_SIZE)-1:0] dats;
     output dsetFlag;
-    output[65535:0] datsOut;
+    output[(DATA_SIZE * COLUMN_SIZE * ROW_SIZE)-1:0] datsOut;
     reg dsetFlag = 0;
-    reg[65535:0] datsOut = 0;
-    reg[65535:0] datsBuff = 0;
+    reg[(DATA_SIZE * COLUMN_SIZE * ROW_SIZE)-1:0] datsOut = 0;
+    reg[(DATA_SIZE * COLUMN_SIZE * ROW_SIZE)-1:0] datsBuff = 0;
     reg[3:0] count = 4'd0;
     
     always@(posedge clock or negedge reset)
@@ -39,7 +49,7 @@ module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
             end
             else
             begin
-                datsBuff[1023:0] = dats;
+                datsBuff[(DATA_SIZE * ROW_SIZE)-1:0] = dats;
                 
                 if(count == 4'd8)
                 begin
@@ -51,7 +61,7 @@ module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
                 else
                 begin
                     count       = count + 4'd1;
-                    datsBuff    = datsBuff<<16;
+                    datsBuff    = datsBuff<<DATA_SIZE;
                     dsetFlag    = 1'b0;
                 end
             end
