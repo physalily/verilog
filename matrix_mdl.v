@@ -1,5 +1,7 @@
 /******************************
 made 2019/1/16 powered harumaki
+module name: matrix_mdl
+this is matrix multipuly unit
 comment:
     nothing
 parameter:
@@ -7,13 +9,14 @@ parameter:
     COLUMN_SIZE
     ROW_SIZE
 function list:
-module
+module matrix_mdl
 +rowSum[22] 
 +sumShift[16] 
 +rowCal[1024]
     +VectorCal[16] 
         +multiplication_16[32] 
         +DRShift_16[32]
+*function arg is bit width that use default parameter.
 *******************************/
 
 module matrix_mdl(clock, reset, enable, datsA, datsB, datsOut);
@@ -27,7 +30,7 @@ module matrix_mdl(clock, reset, enable, datsA, datsB, datsOut);
     input[(DATA_SIZE * COLUMN_SIZE * ROW_SIZE) -1:0] datsB;
     output[(DATA_SIZE * COLUMN_SIZE) -1:0]datsOut;
     reg[(DATA_SIZE * COLUMN_SIZE) -1:0] datsOut;
-    integer i = 0;
+    integer i = 0;//loop counter
     
     always @ (posedge clock or negedge reset)
     begin
