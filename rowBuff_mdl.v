@@ -2,12 +2,15 @@
 made 2019/1/17 powered harumaki
 module name: rowBuff_mdl
 this is matrix_mdl data buffer.
-
+comment:
+    Synthesis need very very long time. In my laptop, about 8h.(use default parameter)
 parameter:
     DATA_SIZE
     COLUMN_SIZE
     ROW_SIZE
 function list
+module rowBuff_dml
++log2 
 *******************************/
 
 module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
@@ -66,7 +69,7 @@ module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
     end
     end
     // Beyond Circuts, ref:Constant Function in Verilog 2001
-        // http://www.beyond-circuits.com/wordpress/2008/11/constant-functions/
+    // http://www.beyond-circuits.com/wordpress/2008/11/constant-functions/
     function integer log2;
     input integer addr;
     begin
