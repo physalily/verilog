@@ -20,9 +20,9 @@ module matrix_mdl
 *******************************/
 
 module matrix_mdl(clock, reset, enable, datsA, datsB, datsOut);
-    parameter DATA_SIZE = 'd16;
-    parameter COLUMN_SIZE = 'd16;
-    parameter ROW_SIZE = 'd16;
+    parameter DATA_SIZE = 'd8;
+    parameter COLUMN_SIZE = 'd64;
+    parameter ROW_SIZE = 'd64;
     input clock;
     input reset;
     input enable;
@@ -44,7 +44,7 @@ module matrix_mdl(clock, reset, enable, datsA, datsB, datsOut);
         begin
             for(i=0; i <COLUMN_SIZE; i =i+1)//64 is matrix columm size
             begin
-                datsOut[i*DATA_SIZE -1+:DATA_SIZE -1] <= sumShift(rowSum(rowCal(datsA, datsB[i*(DATA_SIZE * ROW_SIZE)+:(DATA_SIZE * ROW_SIZE)])));
+                datsOut[i*DATA_SIZE +:DATA_SIZE] <= sumShift(rowSum(rowCal(datsA, datsB[i*(DATA_SIZE * ROW_SIZE)+:(DATA_SIZE * ROW_SIZE)])));
             end
         end
     end
@@ -53,7 +53,7 @@ module matrix_mdl(clock, reset, enable, datsA, datsB, datsOut);
     function[(DATA_SIZE + (DATA_SIZE / 2)):0] rowSum;//DATA_SIZE -1bit x64 overflow size added
     input[(DATA_SIZE * COLUMN_SIZE) -1:0] dataset;
     integer i;
-    for(i = 0; i <(DATA_SIZE * ROW_SIZE) -1; i = i+1)
+    for(i = 0; i <COLUMN_SIZE; i = i+1)
         rowSum = rowSum + dataset[i*DATA_SIZE +:DATA_SIZE ];      
     endfunction
     
@@ -69,7 +69,7 @@ module matrix_mdl(clock, reset, enable, datsA, datsB, datsOut);
     input [(DATA_SIZE* COLUMN_SIZE) -1:0] datsA;
     input [(DATA_SIZE* ROW_SIZE) -1:0] datsB;
     integer i;
-    for(i=0; i < (DATA_SIZE * ROW_SIZE) -1; i =i+1)//(DATA_SIZE * ROW_SIZE) -1 is matrix row size
+    for(i=0; i < COLUMN_SIZE; i =i+1)//(DATA_SIZE * ROW_SIZE) -1 is matrix row size
     begin
         datsOut[i*DATA_SIZE+:DATA_SIZE] = VectorCal(datsA[i*DATA_SIZE+:DATA_SIZE],datsB[i*DATA_SIZE+:DATA_SIZE]);
     end
