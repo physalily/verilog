@@ -1,7 +1,7 @@
 /******************************
 made 2019/1/16 powered harumaki
 module name: matrix_mdl
-this is matrix multipuly unit
+this is matrix multipuly unit.
 comment:
     nothing
 parameter:
