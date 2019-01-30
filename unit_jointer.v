@@ -7,11 +7,11 @@ this is matrix unit joint.
 
 module unit_jointer (selector, in_buffer, in_matrix, datsOut);
     parameter DATA_SIZE = 'd16;//input bit width
-    parameter DATA_WIDTH = 'd64;
+    parameter COLUMN_SIZE = 'd64;
     input selector;
-    input[(DATA_SIZE * DATA_WIDTH) - 1:0] in_buffer;
-    input[(DATA_SIZE * DATA_WIDTH) - 1:0] in_matrix;
-    output[(DATA_SIZE * DATA_WIDTH) - 1:0] datsOut;
+    input[(DATA_SIZE * COLUMN_SIZE) - 1:0] in_buffer;
+    input[(DATA_SIZE * COLUMN_SIZE) - 1:0] in_matrix;
+    output[(DATA_SIZE * COLUMN_SIZE) - 1:0] datsOut;
     
     assign datsOut = selector ? in_buffer : in_matrix;
     //selector 1: input for buffer
