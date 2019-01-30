@@ -26,7 +26,7 @@ module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
     output[(DATA_SIZE * COLUMN_SIZE * ROW_SIZE)-1:0] datsOut;
     reg dsetFlag = 0;
     reg[(DATA_SIZE * COLUMN_SIZE * ROW_SIZE)-1:0] datsOut = 0;
-    reg[(DATA_SIZE * COLUMN_SIZE * ROW_SIZE)-1:0] datsBuff = 0;
+    reg[(COLUMN_SIZE * ROW_SIZE)-1:0] datsBuff[DATA_SIZE -1:0];
     reg [log2(COLUMN_SIZE):0]count = 'b0;
     
     always@(posedge clock or negedge reset)
@@ -34,7 +34,7 @@ module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
     if(~reset)
     begin
         datsOut     = 'h0;
-        datsBuff    = 'h0;
+        //datsBuff    = 'h0;
         count       = 'h0;
     end
     else
@@ -44,30 +44,31 @@ module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
             if(dendFlag == 1'b1)
             begin
                 count       = 4'D0;
-                datsOut     = datsBuff;
+           //     datsOut     = datsBuff;
                 dsetFlag    = 1'b1;
             end
             else
             begin
-                datsBuff[(DATA_SIZE * ROW_SIZE)-1:0] = dats;
+            //    datsBuff[(DATA_SIZE * ROW_SIZE)-1:0] = dats;
                 
                 if(count == COLUMN_SIZE)
                 begin
                     count       = 'd8;
-                    datsOut     = datsBuff;
+             //       datsOut     = datsBuff;
                     datsOut     = 'h0;
                     dsetFlag    = 1'b1;
                 end
                 else
                 begin
                     count       = count + 'd1;
-                    datsBuff    = datsBuff<<DATA_SIZE;
+              //      datsBuff    = datsBuff<<DATA_SIZE;
                     dsetFlag    = 1'b0;
                 end
             end
         end
     end
     end
+    
     // Beyond Circuts, ref:Constant Function in Verilog 2001
     // http://www.beyond-circuits.com/wordpress/2008/11/constant-functions/
     function integer log2;
