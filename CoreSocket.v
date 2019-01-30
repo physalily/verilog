@@ -6,11 +6,10 @@ this is
 function list
 *******************************/
 
-module CoreSocket(
-    
-    );
+module CoreSocket();
+
     begin
-        MatrixCore(
+    MatrixCore(
         
         );
     end
