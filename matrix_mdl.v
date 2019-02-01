@@ -21,8 +21,8 @@ module matrix_mdl
 
 module matrix_mdl(clock, reset, enable, datsA, datsB, datsOut);
     parameter DATA_SIZE = 'd8;
-    parameter COLUMN_SIZE = 'd64;
-    parameter ROW_SIZE = 'd64;
+    parameter COLUMN_SIZE = 'd256;
+    parameter ROW_SIZE = 'd256;
     input clock;
     input reset;
     input enable;
