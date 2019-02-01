@@ -15,8 +15,8 @@ module rowBuff_dml
 
 module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
     parameter DATA_SIZE ='d16;
-    parameter COLUMN_SIZE ='d64;
-    parameter ROW_SIZE = 'd64; 
+    parameter COLUMN_SIZE ='d8;
+    parameter ROW_SIZE = 'd8; 
     input clock;
     input reset;
     input enable;
@@ -28,14 +28,16 @@ module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
     reg[(DATA_SIZE * COLUMN_SIZE * ROW_SIZE)-1:0] datsOut = 0;
     reg[(COLUMN_SIZE * ROW_SIZE)-1:0] datsBuff[DATA_SIZE -1:0];
     reg [log2(COLUMN_SIZE):0]count = 'b0;
+    integer i = 0;
     
     always@(posedge clock or negedge reset)
     begin
     if(~reset)
     begin
         datsOut     = 'h0;
-        //datsBuff    = 'h0;
         count       = 'h0;
+        for(i = 0; i < (COLUMN_SIZE * ROW_SIZE);i = i +1 )
+            datsBuff[i] = 'h0;
     end
     else
     begin
@@ -44,25 +46,29 @@ module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
             if(dendFlag == 1'b1)
             begin
                 count       = 4'D0;
-           //     datsOut     = datsBuff;
                 dsetFlag    = 1'b1;
+                for(i = 0; i < (COLUMN_SIZE * ROW_SIZE); i = i +1 )
+                begin
+                    datsOut[i*DATA_SIZE+:DATA_SIZE] = datsBuff[i];
+                    datsBuff[i] = 'h0;
+                end
             end
             else
             begin
-            //    datsBuff[(DATA_SIZE * ROW_SIZE)-1:0] = dats;
-                
-                if(count == COLUMN_SIZE)
+                for(i = 0; i <ROW_SIZE; i = i+1)
+                    datsBuff[count*ROW_SIZE] = dats;
+                    
+                if(count == COLUMN_SIZE * ROW_SIZE)
                 begin
-                    count       = 'd8;
-             //       datsOut     = datsBuff;
-                    datsOut     = 'h0;
+                    count       = 'd0;
                     dsetFlag    = 1'b1;
+                    for(i = 0; i < (COLUMN_SIZE * ROW_SIZE); i = i +1 )
+                        datsOut[i*DATA_SIZE+:DATA_SIZE] = datsBuff[i];
                 end
                 else
                 begin
-                    count       = count + 'd1;
-              //      datsBuff    = datsBuff<<DATA_SIZE;
-                    dsetFlag    = 1'b0;
+                    count = count + 'd1;
+                    dsetFlag = 1'b0;
                 end
             end
         end
