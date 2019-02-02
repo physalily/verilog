@@ -15,8 +15,8 @@ module rowBuff_dml
 
 module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
     parameter DATA_SIZE ='d16;
-    parameter COLUMN_SIZE ='d8;
-    parameter ROW_SIZE = 'd8; 
+    parameter COLUMN_SIZE ='d16;
+    parameter ROW_SIZE = 'd16;
     input clock;
     input reset;
     input enable;
@@ -27,7 +27,7 @@ module rowBuff_mdl(clock, reset, enable, dendFlag, dats, dsetFlag, datsOut);
     reg dsetFlag = 0;
     reg[(DATA_SIZE * COLUMN_SIZE * ROW_SIZE)-1:0] datsOut = 0;
     reg[(COLUMN_SIZE * ROW_SIZE)-1:0] datsBuff[DATA_SIZE -1:0];
-    reg [log2(COLUMN_SIZE):0]count = 'b0;
+    reg [$clog2(COLUMN_SIZE):0]count = 'b0;
     integer i = 0;
     
     always@(posedge clock or negedge reset)
