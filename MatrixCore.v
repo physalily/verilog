@@ -7,6 +7,7 @@ module MatrixCore
 +rowBuff_mdl
 +matrix_mdl
 +unit_jointer
+//+activate
 *******************************/
 
 module MatrixCore(clock, reset, enable, columnEnable, selector, dendFlag, in_row, in_buffer, in_matrix, datsOut);
@@ -58,4 +59,10 @@ module MatrixCore(clock, reset, enable, columnEnable, selector, dendFlag, in_row
     .in_matrix(in_matrix),
     .datsOut(toMatrix)
     );
+    
+    activation
+    #(DATA_SIZE, ROW_SIZE)
+    AF(
+    );
+    
 endmodule
