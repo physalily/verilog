@@ -2,7 +2,10 @@
 made 2019/1/25 powered harumaki
 module name: CoreSocket
 this is prcessing unit
-function list
+module list
+CoreSocket
++MatrixCore x4  //core elements
++inst_decoder   
 *******************************/
 
 module CoreSocket();
@@ -23,5 +26,11 @@ module CoreSocket();
             );
         end
     endgenerate
+    
+    inst_decoder
+    #()
+    Dec(
+    
+    );
     
 endmodule
