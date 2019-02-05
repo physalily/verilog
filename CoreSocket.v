@@ -12,7 +12,7 @@ module CoreSocket();
     parameter DATA_SIZE = 'd16;
     parameter COLUMN_SIZE = 'd16;
     parameter ROW_SIZE = 'd16;
-    parameter Cores = 'd4;
+    parameter Cores = 'd2;
     
     generate 
     genvar i;
